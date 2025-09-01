@@ -4,6 +4,7 @@ export default {
 
       const { searchParams } = new URL(request.url);
       const text = searchParams.get("text") || "Hello world";  // 默认文本
+      const stype = searchParams.get("stype");
 
       // 随机选择美国英语（en-US）或英国英语（en-GB）
       const languages = ['en-US', 'en-US'];
@@ -14,8 +15,12 @@ export default {
 
       let buffers = [];
       for (const chunk of chunks) {
-        // const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(chunk)}&tl=${selectedLang}&client=tw-ob`;
-        const ttsUrl = `https://dict.youdao.com/dictvoice?audio=${chunk}&type=2`;
+        let ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(chunk)}&tl=${selectedLang}&client=tw-ob`;
+        if (stype == 'youdao') {
+          ttsUrl = `https://dict.youdao.com/dictvoice?audio=${chunk}&type=2`;
+        } else if (stype == 'baidu') {
+          ttsUrl = `https://fanyi.baidu.com/gettts?lan=en&text=${chunk}&spd=3&source=web`;
+        }
         const res = await fetch(ttsUrl, {
           headers: { "User-Agent": "Mozilla/5.0" }
         });
